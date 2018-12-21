@@ -1,6 +1,6 @@
 // Copyright 2018 Mobvoi Inc. All Rights Reserved.
 
-package com.mobvoi;
+package com.luck.testsparkml;
 
 
 /*
@@ -33,7 +33,6 @@ import org.apache.spark.ml.evaluation.RegressionEvaluator;
 import org.apache.spark.ml.recommendation.ALS;
 import org.apache.spark.ml.recommendation.ALSModel;
 // $example off$
-
 public class TestSparkALS {
 
   // $example on$
@@ -86,11 +85,12 @@ public class TestSparkALS {
     SparkSession spark = SparkSession
         .builder()
         .appName("JavaALSExample")
+        .master("local")
         .getOrCreate();
 
     // $example on$
     JavaRDD<Rating> ratingsRDD = spark
-        .read().textFile("data/mllib/als/sample_movielens_ratings.txt").javaRDD()
+        .read().textFile("src/main/resources/data/sample_movielens_ratings.txt").javaRDD()
         .map(Rating::parseRating);
     Dataset<Row> ratings = spark.createDataFrame(ratingsRDD, Rating.class);
     Dataset<Row>[] splits = ratings.randomSplit(new double[]{0.8, 0.2});
@@ -105,7 +105,6 @@ public class TestSparkALS {
         .setItemCol("movieId")
         .setRatingCol("rating");
     ALSModel model = als.fit(training);
-
     // Evaluate the model by computing the RMSE on the test data
     // Note we set cold start strategy to 'drop' to ensure we don't get NaN evaluation metrics
     model.setColdStartStrategy("drop");
